@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="Description" content="帮助文档" />
+    <title>帮助文档</title>
+    <script src="https://cdn.bootcss.com/highlight.js/9.15.10/highlight.min.js"></script>
+    <script src="./static/js/marked.js"></script>
+    <script src="./static/js/marked_with_toc.js"></script>   
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <link href="https://cdn.bootcss.com/highlight.js/9.15.10/styles/atom-one-dark.min.css" rel="stylesheet">
+    <link href="./static/css/markdown-light.css" rel="stylesheet" />
+    <link href="./static/css/flex.css" rel="stylesheet" />
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        /*修改滚动条样式*/
+        #left::-webkit-scrollbar {
+            width: 4px;
+            height: 10px;
+            /**/
+        }
+
+        #left::-webkit-scrollbar-track {
+            background: rgb(239, 239, 239);
+            border-radius: 2px;
+        }
+
+        #left::-webkit-scrollbar-thumb {
+            background: #bfbfbf;
+            border-radius: 10px;
+        }
+
+        #left::-webkit-scrollbar-thumb:hover {
+            background: #bfbfbf;
+        }
+
+        #right::-webkit-scrollbar {
+            width: 4px;
+            height: 10px;
+            /**/
+        }
+
+        #right::-webkit-scrollbar-track {
+            background: rgb(239, 239, 239);
+            border-radius: 2px;
+        }
+
+        #right::-webkit-scrollbar-thumb {
+            background: #bfbfbf;
+            border-radius: 10px;
+        }
+
+        #right::-webkit-scrollbar-thumb:hover {
+            background: #bfbfbf;
+        }
+
+        .active {
+            color: #409eff;
+        }
+
+        .nav {
+            margin-left: 20px;
+            height: 64px;
+            line-height: 65px;
+            font-size: 16px;
+            text-align: center;
+            color: #000000;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            color: #333333;
+            opacity: 1;
+            transform: scaleX(1);
+        }
+        .nav-link:after {
+            content: "";
+            position: absolute;
+            display: block;
+            width: 32px;
+            height: 2px;
+            background-color: #000;
+            border-radius: 2px;
+            left: 50%;
+            margin-left: -16px;
+            bottom: 0;
+            opacity: 0;
+            transform: scaleX(0);
+            transition: all .2s cubic-bezier(.18,.89,.17,.88),opacity .15s ease;
+        }
+        .navActive {
+            height: 63px;
+            /* border-bottom: 2px solid #000; */
+        }
+        .navActive:after{
+            opacity: 1;
+            transform: scaleX(1);
+        }
+       
+        
+    </style>
+</head>
+
+<body>
+    <div class="flex flex-column" style="height: 100%;">
+        <div id="navTop" class="flex "
+            style="height: 64px;box-shadow: 0 1px 0 0 rgba(0,0,0,.06);background-color: #f7f7f7;list-style: none;padding-left:0px;">
+            <div style="margin-left: 30px;width:180px;font-size:23px;" class="nav"><a target="vue.md">帮助中心</a>
+            </div>
+            <div class="flex " style="margin:auto;padding-right: 180px;">
+                <div class="nav "><a class="nav-link" target="申报端操作手册.md">申报端操作手册</a></div>
+            </div>
+        </div>
+        <div class="flex-one flex">
+            <div id="left" style="width:200px;"></div>
+            <div class="flex-one" id="right"></div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+    $('#navTop').find(".nav-link:eq(0)").addClass('navActive');
+    getFile("申报端操作手册.md")
+    function getFile(url) {
+        var xhr = new XMLHttpRequest()
+        xhr.open("GET", url, true); //注意路径问题读取data.txt文件的内容。
+        xhr.send(null);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200 || xhr.status == 0) { //请求本地txt文件时状态码是0。
+                    markedWithToc(xhr.responseText)                   
+                }
+            }
+        }
+    }
+    window.onload = function () {
+        //监听导航
+        $("#navTop").on("click", ".nav", function () {
+            let url = $($(this).children()[0].target).selector;
+            var arr = $(".nav")
+            for (let i = 0; i < arr.length; i++) {
+                $($(arr[i]).children()).removeClass("navActive")
+            }
+            if ($(this)[0].innerText != "帮助中心") {
+                $($(this).children()).addClass("navActive")
+            }
+            getFile(url)
+        })
+        //监听二级标题 
+        $("#left").on("click", ".secondTitle", function (e) {
+            var secondList = $("#left .secondTitle");
+            var fitstList = $("#left .firstTitle");
+            var threeList = $("#left .threeTitle");
+            for (let i = 0; i < fitstList.length; i++) {
+                $($(fitstList)[i]).removeClass("active");
+            }
+            for (let i = 0; i < secondList.length; i++) {
+                $($(secondList)[i]).removeClass("active");
+            }
+            for (let i = 0; i < secondList.length; i++) {
+                $($(threeList)[i]).removeClass("active");
+            }  
+            $(this).addClass("active")         
+        })
+        //监听一级标题
+        $("#left").on("click", ".firstTitle", function (e) {
+            var secondList = $("#left .secondTitle");
+            var fitstList = $("#left .firstTitle");
+            var threeList = $("#left .threeTitle");
+            for (let i = 0; i < fitstList.length; i++) {
+                $($(fitstList)[i]).removeClass("active");
+            }
+            for (let i = 0; i < secondList.length; i++) {
+                $($(secondList)[i]).removeClass("active");
+            }
+            for (let i = 0; i < secondList.length; i++) {
+                $($(threeList)[i]).removeClass("active");
+            }  
+            $(this).addClass("active")         
+        })
+        //监听三级标题
+        $("#left").on("click", ".threeTitle", function (e) {
+            var secondList = $("#left .secondTitle");
+            var fitstList = $("#left .firstTitle");
+            var threeList = $("#left .threeTitle");
+            for (let i = 0; i < fitstList.length; i++) {
+                $($(fitstList)[i]).removeClass("active");
+            }
+            for (let i = 0; i < secondList.length; i++) {
+                $($(secondList)[i]).removeClass("active");
+            }
+            for (let i = 0; i < secondList.length; i++) {
+                $($(threeList)[i]).removeClass("active");
+            }           
+            $(this).addClass("active")
+        })
+
+    };
+</script>
